@@ -1,0 +1,4 @@
+RewriteEngine On
+
+# Permetti API RESTful con parametri opzionali
+RewriteRule ^api/([^/]+)(/([^/]+))?$ api.php?action=$1&id=$3 [QSA,L]
