@@ -22,6 +22,7 @@ When the proxy detects an error, it returns a formatted response like this:
   "error": true,
   "code": 100,
   "response": {
-    "message": "Action not valid"
+    "message": "Action not valid",
+    "result" : null
   }
 }

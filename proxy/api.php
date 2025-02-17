@@ -1,4 +1,8 @@
 <?php
+header("Access-Control-Allow-Origin: *"); // Permette richieste da qualsiasi origine
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS"); // Metodi permessi
+header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Header permessi
+
 require_once 'config.php';
 require_once 'utils.php';
 
