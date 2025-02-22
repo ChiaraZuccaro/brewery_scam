@@ -1,5 +1,5 @@
 {
-  "name": "brewery-scam",
+  "name": "digimon-codex",
   "version": "0.0.0",
   "scripts": {
     "start": "ng serve --port 1003",

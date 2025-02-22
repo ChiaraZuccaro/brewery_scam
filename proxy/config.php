@@ -1,5 +1,11 @@
 <?php
-$base = 'https://punkapi.online/v3/';
-define('BEERS_BASE_URL', $base . 'beers');
-define('IMAGES_BASE_URL', $base . 'images');
+$base = 'https://digi-api.com/api/v1/';
+define('DIGIMON_BASE_URL', $base . 'digimon');
+
+
+define('ATTRIBUTE_BASE_URL', $base . 'attribute');
+define('FIELD_BASE_URL', $base . 'field');
+define('LEVEL_BASE_URL', $base . 'level');
+define('TYPE_BASE_URL', $base . 'type');
+define('SKILL_BASE_URL', $base . 'skill');
 ?>

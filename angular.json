@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "brewery_scam": {
+    "digimon_codex": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -39,7 +39,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/brewery_scam",
+            "outputPath": "dist/digimon_codex",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -86,10 +86,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "brewery_scam:build:production"
+              "buildTarget": "digimon_codex:build:production"
             },
             "development": {
-              "buildTarget": "brewery_scam:build:development"
+              "buildTarget": "digimon_codex:build:development"
             }
           },
           "defaultConfiguration": "development"
