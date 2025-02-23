@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
 @Component({
-  selector: 'work-in-progress',
+  selector: 'error',
   imports: [],
   template: `
   <div class="container">
     <picture>
       <!-- mobile -->
-      <source media="(max-width: 768px)" srcset="./assets/work_in_progress_mobile.webp">
+      <source media="(max-width: 768px)" srcset="./assets/404_not_found_mobile.webp">
       <!-- desktop -->
-      <source media="(min-width: 769px)" srcset="./assets/work_in_progress.webp">
+      <source media="(min-width: 769px)" srcset="./assets/404_not_found.webp">
       <!-- fallback -->
-      <img src="./assets/work_in_progress.webp" alt="work_in_progress_page">
+      <img src="./assets/404_not_found.webp" alt="404_page">
     </picture>
   </div>
   `,
@@ -24,4 +24,4 @@ import { Component } from '@angular/core';
   }
   `
 })
-export class WorkInProgressComponent {}
+export class ErrorComponent {}
