@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AfterViewInit, Component } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
-import { BeersService } from '../../services/beers.service';
-import { ApisService } from '../../services/apis.service';
+import { BeersService } from '../../services/digi.service';
+import { DigiApisService } from '../../services/digi-apis.service';
 
 @Component({
   selector: 'app-work-in-progress',
@@ -12,16 +12,17 @@ import { ApisService } from '../../services/apis.service';
 })
 export class WorkInProgressComponent {
   
-  constructor(private _http: HttpClient, 
-    private beersService: BeersService,
-    private apiService: ApisService
+  constructor(private _http: HttpClient,
+    private _digiApi: DigiApisService
   ) {
+    console.log(_digiApi.baseUrl)
+
     // console.log('production ????',env.isProd);
     
   }
 
   public getData() {
-    this.beersService.data.set(10);
+    // this.beersService.data.set(10);
     // const headers = new HttpHeaders({
     //   ''
     // })
