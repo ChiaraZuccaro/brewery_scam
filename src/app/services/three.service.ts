@@ -26,7 +26,7 @@ export class ThreeService {
     this.renderer.render(this.scene, this.camera);
   }
 
-  public async initSceneById(element: HTMLElement) {
+  public async initSceneById(element: HTMLElement): Promise<void> {
     const { offsetWidth: width, offsetHeight: height } = element;
 
     const light = new DirectionalLight(0xffffff, 1.5);
@@ -50,6 +50,20 @@ export class ThreeService {
     element.appendChild(this.renderer.domElement);
 
     this.renderer.render(this.scene, this.camera);
+  }
+
+  public handleResizeScene(isMobile: boolean) {
+    if (!this.renderer || !this.camera || !this.scene) return;
+    
+    const element = this.renderer.domElement.parentElement;
+    
+    if (element) {
+      const { offsetWidth: width, offsetHeight: height } = element;
+      this.camera.aspect = width / height;
+      this.camera.fov = isMobile ? 60 : 75;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(width, height);
+    }
   }
 
   public uploadModel(path: string) {
