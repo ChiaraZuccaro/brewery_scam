@@ -1,7 +1,8 @@
 import { Injectable, signal } from '@angular/core';
-import { AmbientLight, AxesHelper, DirectionalLight, LoadingManager, PerspectiveCamera, Scene } from 'three/src/Three.Core.js';
-import { GLTFLoader, OrbitControls } from 'three/examples/jsm/Addons.js';
-import { WebGLRenderer } from 'three';
+import { LoadingManager } from 'three/src/Three.Core.js';
+import { GLTFLoader } from 'three/examples/jsm/Addons.js';
+import { SceneData } from '@interfaces/three.interface';
+import { HomeScene } from '@configs/home-scene.config';
 
 @Injectable({
   providedIn: 'root'
@@ -9,70 +10,57 @@ import { WebGLRenderer } from 'three';
 export class ThreeService {
   private loadManager = new LoadingManager();
   private gltfLoader = new GLTFLoader(this.loadManager);
-
-  private scene: Scene;
-  private camera: PerspectiveCamera;
-  private renderer: WebGLRenderer;
-  private animationFrameId: number = 0;
-  private controls: OrbitControls;
+  private scenes = new Map<string, SceneData>();
 
   public ready = signal<boolean>(false);
 
-  public animate = (): void => {
-    this.animationFrameId = requestAnimationFrame(this.animate);
-    // dev mode
-    this.controls.update();
-    // dev mode 
-    this.renderer.render(this.scene, this.camera);
+  // public animate = (): void => {
+  //   this.animationFrameId = requestAnimationFrame(this.animate);
+  //   // dev mode
+  //   this.controls.update();
+  //   // dev mode 
+  //   this.renderer.render(this.scene, this.camera);
+  // }
+
+  public async initSceneById(element: HTMLElement, sceneId: string): Promise<void> {
+    if(!this.scenes.has(sceneId)) return;
+
+    let sceneData: SceneData;
+
+    switch(sceneId) {
+      case 'home':
+        sceneData = new HomeScene(element);
+      break;
+      default:
+      return Promise.reject(`Scene ${sceneId} not found!`);
+    }
+    this.scenes.set(sceneId, sceneData);
   }
 
-  public async initSceneById(element: HTMLElement): Promise<void> {
-    const { offsetWidth: width, offsetHeight: height } = element;
-
-    const light = new DirectionalLight(0xffffff, 1.5);
-    light.position.set(5,5,5);
-    const ambLight = new AmbientLight(0xffffff, 0.5);
-
-    this.scene = new Scene();
-    this.camera = new PerspectiveCamera(75, width / height, .1, 150);
-    this.renderer = new WebGLRenderer({ antialias: window.devicePixelRatio < 2, logarithmicDepthBuffer: true });
-
-    // dev mode
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    const axes = new AxesHelper(3);
-    // dev mode
-
-    this.scene.add(light, ambLight, axes);
-    this.camera.position.set(0,0,5);
-
-    this.renderer.setSize(width, height);
-
-    element.appendChild(this.renderer.domElement);
-
-    this.renderer.render(this.scene, this.camera);
-  }
-
-  public handleResizeScene(isMobile: boolean) {
-    if (!this.renderer || !this.camera || !this.scene) return;
+  // public handleResizeScene(isMobile: boolean) {
+  //   if (!this.renderer || !this.camera || !this.scene) return;
     
-    const element = this.renderer.domElement.parentElement;
+  //   const element = this.renderer.domElement.parentElement;
     
-    if (element) {
-      const { offsetWidth: width, offsetHeight: height } = element;
-      this.camera.aspect = width / height;
-      this.camera.fov = isMobile ? 60 : 75;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(width, height);
+  //   if (element) {
+  //     const { offsetWidth: width, offsetHeight: height } = element;
+  //     this.camera.aspect = width / height;
+  //     this.camera.fov = isMobile ? 60 : 75;
+  //     this.camera.updateProjectionMatrix();
+  //     this.renderer.setSize(width, height);
+  //   }
+  // }
+
+  public uploadModel(path: string, sceneId: string) {
+    const istanceScene = this.scenes.get(sceneId);
+    if(istanceScene) {
+      this.gltfLoader.load(
+        path, resp => { resp.scene.position.set(0,2,0); istanceScene.scene.add(resp.scene) }
+      );
     }
   }
 
-  public uploadModel(path: string) {
-    this.gltfLoader.load(
-      path, resp => { resp.scene.position.set(0,2,0); this.scene.add(resp.scene) }
-    );
-  }
-
-  public stopAnimation() {
-    cancelAnimationFrame(this.animationFrameId);
-  }
+  // public stopAnimation() {
+  //   cancelAnimationFrame(this.animationFrameId);
+  // }
 }

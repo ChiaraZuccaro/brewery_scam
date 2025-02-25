@@ -17,7 +17,7 @@ export class DeviceService {
   private handleResize(state: BreakpointState) {
     const isMobile = this.isMobileBreakpoint(state);
     this.isMobile.set(isMobile);
-    this._threeService.handleResizeScene(isMobile);
+    // this._threeService.handleResizeScene(isMobile);
   }
 
   public initMediaObserver() {

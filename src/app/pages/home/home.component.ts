@@ -10,6 +10,7 @@ import { ThreeService } from '@services/three.service';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements AfterViewInit, OnDestroy {
+  private id = 'home';
   
   constructor(
     private _threeService: ThreeService,
@@ -20,16 +21,16 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     const heroNode = document.getElementById('hero');
     if(heroNode) {
-      this._threeService.initSceneById(heroNode).then(() => {
-        this._threeService.uploadModel('assets/3d/digimon_greymon.glb');
+      this._threeService.initSceneById(heroNode, this.id).then(() => {
+        this._threeService.uploadModel('assets/3d/digimon_greymon.glb', this.id);
         
-        this._threeService.animate();
+        // this._threeService.animate();
       });
     }
   }
 
   ngOnDestroy() {
-    this._threeService.stopAnimation();
+    // this._threeService.stopAnimation();
   }
 
   private setHomeMetatag() {
