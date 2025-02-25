@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
+import { descrHome, keywordsHome } from '@meta/meta-home';
 import { ThreeService } from '@services/three.service';
 
 @Component({
@@ -8,9 +10,12 @@ import { ThreeService } from '@services/three.service';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements AfterViewInit, OnDestroy {
-  private _threeService = inject(ThreeService);
-
-  constructor() { }
+  
+  constructor(
+    private _threeService: ThreeService,
+    private _titleService: Title,
+    private _metaService: Meta
+  ) { this.setHomeMetatag(); }
 
   ngAfterViewInit() {
     const heroNode = document.getElementById('hero');
@@ -25,5 +30,14 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this._threeService.stopAnimation();
+  }
+
+  private setHomeMetatag() {
+    this._titleService.setTitle('Digimon Codex');
+    this._metaService.addTags([
+      { name: 'description', content: descrHome },
+      { name: 'keywords', content: keywordsHome },
+      { name: 'robots', content: 'index, follow' }
+    ]);
   }
 }
