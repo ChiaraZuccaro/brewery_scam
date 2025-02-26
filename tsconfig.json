@@ -9,6 +9,7 @@
       "@interfaces/*": ["src/app/interfaces/*"],
       "@meta/*": ["src/app/meta/*"],
       "@configs/*": ["src/app/configs/*"],
+      "@enums/*": ["src/app/enums/*"],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,
