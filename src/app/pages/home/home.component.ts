@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { descrHome, keywordsHome } from '@meta/meta-home';
 import { ThreeService } from '@services/three.service';
@@ -21,16 +21,14 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     const heroNode = document.getElementById('hero');
     if(heroNode) {
-      this._threeService.initSceneById(heroNode, this.id).then(() => {
-        this._threeService.uploadModel('assets/3d/digimon_greymon.glb', this.id);
-        
-        // this._threeService.animate();
-      });
+      this._threeService.initSceneById(heroNode, this.id).then(
+        () => { this._threeService.uploadModels(this.id); this._threeService.animate(this.id); }
+      );
     }
   }
 
   ngOnDestroy() {
-    // this._threeService.stopAnimation();
+    this._threeService.destroyScene(this.id);
   }
 
   private setHomeMetatag() {

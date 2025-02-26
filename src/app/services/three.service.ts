@@ -1,8 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { LoadingManager } from 'three/src/Three.Core.js';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
-import { SceneData } from '@interfaces/three.interface';
 import { HomeScene } from '@configs/home-scene.config';
+import { BaseScene } from '@configs/base-scene.config';
 
 @Injectable({
   providedIn: 'root'
@@ -10,22 +10,25 @@ import { HomeScene } from '@configs/home-scene.config';
 export class ThreeService {
   private loadManager = new LoadingManager();
   private gltfLoader = new GLTFLoader(this.loadManager);
-  private scenes = new Map<string, SceneData>();
+  private scenes = new Map<string, BaseScene>();
 
   public ready = signal<boolean>(false);
 
-  // public animate = (): void => {
-  //   this.animationFrameId = requestAnimationFrame(this.animate);
-  //   // dev mode
-  //   this.controls.update();
-  //   // dev mode 
-  //   this.renderer.render(this.scene, this.camera);
-  // }
+  public animate = (sceneId: string): void => {
+    const instance = this.scenes.get(sceneId);
+    if(instance) {
+      instance.animationFrameId = requestAnimationFrame(() => this.animate(sceneId));
+      // dev mode
+      instance.controls.update();
+      // dev mode 
+      instance.renderer.render(instance.scene, instance.camera);
+    }
+  }
 
   public async initSceneById(element: HTMLElement, sceneId: string): Promise<void> {
-    if(!this.scenes.has(sceneId)) return;
+    if(this.scenes.has(sceneId)) return Promise.reject(`Scene ${sceneId} already instantiated!`);
 
-    let sceneData: SceneData;
+    let sceneData: BaseScene;
 
     switch(sceneId) {
       case 'home':
@@ -39,9 +42,7 @@ export class ThreeService {
 
   // public handleResizeScene(isMobile: boolean) {
   //   if (!this.renderer || !this.camera || !this.scene) return;
-    
   //   const element = this.renderer.domElement.parentElement;
-    
   //   if (element) {
   //     const { offsetWidth: width, offsetHeight: height } = element;
   //     this.camera.aspect = width / height;
@@ -51,16 +52,20 @@ export class ThreeService {
   //   }
   // }
 
-  public uploadModel(path: string, sceneId: string) {
-    const istanceScene = this.scenes.get(sceneId);
-    if(istanceScene) {
-      this.gltfLoader.load(
-        path, resp => { resp.scene.position.set(0,2,0); istanceScene.scene.add(resp.scene) }
-      );
+  public uploadModels(sceneId: string) {
+    const instance = this.scenes.get(sceneId);
+    if(instance) {
+      instance.objsPaths.forEach(obj => this.gltfLoader.load(
+        obj, resp => { resp.scene.position.set(0,2,0); instance.scene.add(resp.scene); }
+      ));
     }
   }
 
-  // public stopAnimation() {
-  //   cancelAnimationFrame(this.animationFrameId);
-  // }
+  public destroyScene(sceneId:string) {
+    const instance = this.scenes.get(sceneId);
+    if(instance) {
+      cancelAnimationFrame(instance.animationFrameId);
+      instance.destroy();
+    }
+  }
 }

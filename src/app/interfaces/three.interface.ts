@@ -14,13 +14,7 @@ export interface SceneConfig {
 }
 
 export interface SceneData {
-  scene: Scene,
-  camera: PerspectiveCamera,
-  renderer: WebGLRenderer,
-  controls: OrbitControls,
-  animationFrameId: number,
-  config: SceneConfig,
-  init(): void,
-  animate(): void,
-  destroy(): void
+  domEl: HTMLElement,
+  isMobile: boolean,
+  config: SceneConfig
 }
