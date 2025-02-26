@@ -1,16 +1,22 @@
 import { SceneConfig } from "@interfaces/three.interface";
 import { BaseScene } from "./base-scene.config";
-import { Color, Mesh, PlaneGeometry, ShaderMaterial } from "three";
+import { BackSide, Color, CylinderGeometry, Mesh, ShaderMaterial } from "three";
 
 export class HomeScene extends BaseScene {
-  private backgroundMesh: Mesh;
-  private backgroundMaterial: ShaderMaterial;
-
+  private tunnel: Mesh;
+  private tunnelMaterial: ShaderMaterial;
   private config: SceneConfig;
 
   constructor(el: HTMLElement) {
-    const config: SceneConfig = { background: 0xffffff };
-    super({ domEl: el, isMobile: false, config });
+    const config: SceneConfig = {
+      background: 0x000000, // Nero digitale
+    };
+
+    super({
+      domEl: el,
+      isMobile: false,
+      config
+    });
     this.config = config;
     this.objsPaths = this.get3dPaths();
     this.setupScene();
@@ -25,20 +31,24 @@ export class HomeScene extends BaseScene {
       this.scene.background = new Color(this.config.background);
     }
 
-    this.addShaderBackground();
+    this.addDigitalTunnel();
   }
 
-  private addShaderBackground() {
-    const geometry = new PlaneGeometry(10, 10);
-    
-    this.backgroundMaterial = new ShaderMaterial({
+  private addDigitalTunnel() {
+    const geometry = new CylinderGeometry(5, 5, 50, 32, 32, true);
+    geometry.rotateX(Math.PI / 2);
+
+    this.tunnelMaterial = new ShaderMaterial({
+      side: BackSide,
       uniforms: {
         time: { value: 0.0 }
       },
       vertexShader: `
+        varying vec3 vNormal;
         varying vec2 vUv;
         void main() {
           vUv = uv;
+          vNormal = normal;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
       `,
@@ -47,16 +57,19 @@ export class HomeScene extends BaseScene {
         varying vec2 vUv;
 
         void main() {
-          float lines = sin(vUv.y * 10.0 + time) * 0.5 + 0.5;
-          vec3 color = vec3(0.0, lines, 1.0);
+          float speed = time * 2.0;
+          float lines = sin((vUv.y * 20.0 + speed)) * 0.5 + 0.5; // Linee digitali in movimento
+          float circuits = step(0.7, mod(vUv.x * 10.0 + speed, 1.0)); // Circuiti spezzati
+
+          vec3 color = vec3(0.0, lines * circuits, 1.0); // Azzurro digitale
+
           gl_FragColor = vec4(color, 1.0);
         }
       `
     });
 
-    this.backgroundMesh = new Mesh(geometry, this.backgroundMaterial);
-    this.backgroundMesh.position.set(0, 0, -2);
-    this.scene.add(this.backgroundMesh);
+    this.tunnel = new Mesh(geometry, this.tunnelMaterial);
+    this.scene.add(this.tunnel);
   }
 
   animate() {
@@ -64,9 +77,10 @@ export class HomeScene extends BaseScene {
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
 
-    // Aggiorna l'animazione dello shader
-    if (this.backgroundMaterial) {
-      this.backgroundMaterial.uniforms["time"].value += 0.02;
+    if (this.tunnelMaterial) {
+      this.tunnelMaterial.uniforms['time'].value += 0.02;
     }
+
+    this.camera.position.z -= 0.1;
   }
 }
